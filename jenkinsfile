@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+	stages {
+		stage("git clone"){
+			steps {
+                // Get some code from a GitHub repository
+                git url: 'https://github.com/Vishnu4226/HellowWorld.git', branch: 'master'
+            }
+		}
+		stage("maven build"){
+			steps{
+				sh "mvn clean install"
+			}
+		}
+		stage("Deploy") {
+            input {
+                message "Ready to deploy?"
+                ok "Yes"
+                submitter "ssbostan,admin,admins,managers"
+                submitterParameter "SUBMITTER_USERNAME"
+            }
+			steps {
+				sh "cp /var/lib/jenkins/workspace/interactivepipelines-test/target/*.war /opt/apache-tomcat-8.5.87/webapps"  
+                echo "Deployment stage."
+            }
+        }
+    }
+}
